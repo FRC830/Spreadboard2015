@@ -10,7 +10,6 @@ private:
 	Victor*victorOne;
 	Victor*victorTwo;
 	Victor*victorThree;
-	LiveWindow *lw;
 
 
 	void RobotInit()
@@ -19,8 +18,6 @@ private:
 		victorOne = new Victor(FIRST_VICTOR_PWM);
 		victorTwo = new Victor(SECOND_VICTOR_PWM);
 		victorThree = new Victor(THRID_VICTOR_PWM);
-
-		lw = LiveWindow::GetInstance();
 	}
 
 	void AutonomousInit()
@@ -45,7 +42,6 @@ private:
 
 	void TestPeriodic()
 	{
-		lw->Run();
 	}
 };
 
