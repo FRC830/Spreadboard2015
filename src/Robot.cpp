@@ -1,26 +1,19 @@
 #include "WPILib.h"
 #include "../util/830utilities.h"
-#include <map>
 
 class Robot: public IterativeRobot
 {
 private:
-	static const int FIRST_VICTOR_PWM = 1;
-	static const int SECOND_VICTOR_PWM = 2;
-	static const int THRID_VICTOR_PWM = 3;
-
-	Victor * victorOne;
-	Victor * victorTwo;
-	Victor * victorThree;
+	static const std::vector<int> victor_pins;
+	std::vector<Victor*> victors;
 	GamepadF310 * pilot;
 
 
 	void RobotInit()
 	{
-
-		victorOne = new Victor(FIRST_VICTOR_PWM);
-		victorTwo = new Victor(SECOND_VICTOR_PWM);
-		victorThree = new Victor(THRID_VICTOR_PWM);
+		for_each(victor_pins, [&](int pin) {
+			victors.push_back(new Victor(pin));
+		});
 		pilot = new GamepadF310(0);
 	}
 
@@ -41,15 +34,40 @@ private:
 
 	void TeleopPeriodic()
 	{
-		victorOne->Set(pilot->LeftY());
-		SmartDashboard::PutNumber("left y", pilot->LeftY());
-		SmartDashboard::PutNumber("victor channel", victorOne->GetChannel());
-		SmartDashboard::PutNumber("victor value", victorOne->Get());
+		for_each(victors, [&](Victor *v) {
+			int pin = v->GetChannel();
+			switch (pin) {
+			case 1:
+				v->Set(pilot->LeftY());
+				break;
+			case 2:
+				v->Set(pilot->RightY());
+				break;
+			case 3:
+				v->Set(pilot->DPadY());
+				break;
+			default:
+				break;
+			}
+		});
+		UpdateDashboard();
 	}
 
-	void TestPeriodic()
+	void DisabledPeriodic()
 	{
+		for_each(victors, [&](Victor *v) {
+			v->Set(0);
+		});
+		UpdateDashboard();
+	}
+
+	void UpdateDashboard() {
+		for_each(victors, [&](Victor *v) {
+			SmartDashboard::PutNumber(std::string("Pin ") + std::to_string(v->GetChannel()), v->Get());
+		});
 	}
 };
+
+const std::vector<int> Robot::victor_pins = {1, 2, 3};
 
 START_ROBOT_CLASS(Robot);
