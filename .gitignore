@@ -1,4 +1,4 @@
-Debug/src/Robot.o
-Debug/FRCUserProgram
-sysProps.xml
-Debug/
+Debug
+.cproject
+.project
+.settings/
