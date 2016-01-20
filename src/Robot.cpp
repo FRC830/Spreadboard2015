@@ -7,7 +7,7 @@ private:
 	static const std::vector<int> victor_pins;
 	std::vector<Victor*> victors;
 	GamepadF310 * pilot;
-
+	Solenoid * piston;
 
 	void RobotInit()
 	{
@@ -15,6 +15,7 @@ private:
 			victors.push_back(new Victor(pin));
 		});
 		pilot = new GamepadF310(0);
+		piston = new Solenoid(1);
 	}
 
 	void AutonomousInit()
